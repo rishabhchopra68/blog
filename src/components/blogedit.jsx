@@ -2,7 +2,6 @@
 
 import React, { Component } from "react";
 import { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
 // import getBlogs from "../getdata";
 
 import { getBlog, saveBlog } from "../getdata";
@@ -10,41 +9,41 @@ import { getBlog, saveBlog } from "../getdata";
 const BlogEdit = (props) => {
   const id = props.match.params.id; // current blog ID
 
-  const [blog, setblog] = useState([]);
+  const [blog, setblog] = useState([]); // to set/use current blog details
 
-  async function populateBlogs() {
+  async function populateBlog() {
+    // getting blog data
     const { data } = await getBlog(id);
     setblog(data);
-
-    console.log(data);
-    // currentblog = blogs.filter((blog) => blog.id == id);
-    // setcurrblog(blogs.filter((blog) => blog.id == id));
   }
 
-  useEffect(() => populateBlogs(), []);
-  useEffect(() => {}, [blog]);
+  useEffect(() => {
+    // only for initial render
+    console.log("changed");
+    populateBlog(blog);
+  }, []);
 
-  //   console.log(currentblog);
-  //   console.log(currentblog[0].title);
-
-  //   handleSubmit = (event) => {
-  //     let blog = {id:};
-
-  //   }
   function handleChange(event) {
     // event.preventDefault();
     let field = event.target.name;
-
     let data = { ...blog };
-
     data[field] = event.target.value;
     setblog(data);
-    // this.setState({ currentToDo: { ...currentToDo } });
   }
+
   async function handleSubmit(event) {
     event.preventDefault();
-    const result = await saveBlog({ ...blog });
-    console.log(blog);
+    // const result = await saveBlog({ ...blog });
+    let posts = JSON.parse(localStorage.getItem("data"));
+
+    posts = posts.map((post) => {
+      if (post.id == id) {
+        return { ...blog };
+      }
+      return post;
+    });
+    localStorage.setItem("data", JSON.stringify(posts));
+
     props.history.push("/");
   }
 

@@ -4,61 +4,53 @@ import axios from "axios";
 import { Link, Switch, Route } from "react-router-dom";
 import BlogDetails from "./blogdetails";
 import { getBlogs } from "../getdata";
+import { PropertyKeys } from "ag-grid-community";
 
-const Home = () => {
-  const [data, setdata] = useState([]);
-
+const Home = (props) => {
   useEffect(() => {
-    populateBlogs();
+    if (!localStorage.getItem("data")) {
+      populateBlogs();
+    }
+    console.log("hello");
   }, []);
 
   function handleDelete(id) {
-    let posts = [...data];
+    let posts = [...JSON.parse(localStorage.getItem("data"))];
     posts = posts.filter((post) => post.id !== id);
-    setdata(posts);
+    localStorage.setItem("data", JSON.stringify(posts));
+    props.history.push("/");
   }
 
   async function populateBlogs() {
     const { data } = await getBlogs();
-    setdata(data.slice(0, 10));
+    localStorage.setItem("data", JSON.stringify(data.slice(0, 10)));
+    props.history.push("/");
   }
-
-  //   const getData = async () => {
-  //     try {
-  //       const data = await axios.get(
-  //         "https://jsonplaceholder.typicode.com/posts"
-  //       );
-  //       //   console.log(data.data.slice(0, 10));
-  //       setdata(data.data.slice(0, 10));
-  //     } catch (error) {
-  //       console.log(error);
-  //       return [];
-  //     }
-  //   };
 
   return (
     <div>
       <h1>Blogapp</h1>
       <Link to="/create"></Link>
       <ol className="list-group">
-        {data.map((blog) => (
-          <li key={blog.id}>
-            {blog.title}
-            <br></br>
-            <Link to={"/viewblog/" + blog.id}>
-              <button className="btn btn-success">View</button>
-            </Link>
-            <Link to={"/editblog/" + blog.id}>
-              <button className="btn btn-primary">Edit</button>
-            </Link>
-            <button
-              className="btn btn-danger"
-              onClick={() => handleDelete(blog.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
+        {localStorage.getItem("data") &&
+          JSON.parse(localStorage.getItem("data")).map((blog) => (
+            <li key={blog.id}>
+              {blog.title}
+              <br></br>
+              <Link to={"/viewblog/" + blog.id}>
+                <button className="btn btn-success">View</button>
+              </Link>
+              <Link to={"/editblog/" + blog.id}>
+                <button className="btn btn-primary">Edit</button>
+              </Link>
+              <button
+                className="btn btn-danger"
+                onClick={() => handleDelete(blog.id)}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
       </ol>
     </div>
   );

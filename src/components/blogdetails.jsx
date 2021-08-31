@@ -1,23 +1,14 @@
 import React, { Component, useEffect } from "react";
 import { getBlogs } from "../getdata";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const BlogDetails = (props) => {
-  console.log(props);
-
   const id = props.match.params.id; // current blog ID
-
-  const [blogs, setblogs] = useState([]);
-
-  async function populateBlogs() {
-    const { data } = await getBlogs();
-    setblogs(data.slice(0, 10));
-  }
-  useEffect(() => populateBlogs(), []);
 
   return (
     <div>
-      {blogs.map((blog) => {
+      {JSON.parse(localStorage.getItem("data")).map((blog) => {
         if (blog.id == id) {
           return (
             <div style={{ margin: "20px" }} key={blog.id}>
@@ -29,6 +20,14 @@ const BlogDetails = (props) => {
           );
         }
       })}
+      {/* <Link to="/"> */}
+      <button
+        className="btn btn-primary"
+        onClick={() => props.history.push("/")}
+      >
+        Done
+      </button>
+      {/* </Link> */}
     </div>
   );
 };
