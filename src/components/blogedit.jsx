@@ -3,18 +3,29 @@
 import React, { Component } from "react";
 import { useState, useEffect } from "react";
 // import getBlogs from "../getdata";
-
-import { getBlog, saveBlog } from "../getdata";
+import { Redirect } from "react-router-dom";
 
 const BlogEdit = (props) => {
   const id = props.match.params.id; // current blog ID
 
   const [blog, setblog] = useState([]); // to set/use current blog details
 
-  async function populateBlog() {
-    // getting blog data
-    const { data } = await getBlog(id);
-    setblog(data);
+  function checkPageExists(id) {
+    const data = JSON.parse(localStorage.getItem("data")).filter(
+      (blog) => blog.id == id
+    );
+    console.log(data);
+    if (data[0]) {
+      setblog(data[0]);
+    } else {
+      console.log("not found");
+      props.history.push("/notfound");
+      //   <Redirect to="/notfound"></Redirect>;
+    }
+  }
+
+  function populateBlog() {
+    checkPageExists(id);
   }
 
   useEffect(() => {
@@ -24,7 +35,7 @@ const BlogEdit = (props) => {
   }, []);
 
   function handleChange(event) {
-    // event.preventDefault();
+    event.preventDefault();
     let field = event.target.name;
     let data = { ...blog };
     data[field] = event.target.value;
@@ -50,25 +61,27 @@ const BlogEdit = (props) => {
   return (
     <div>
       <h1> Edit blog</h1>
-      <form className="form-group" onSubmit={handleSubmit}>
-        <label>Title</label>
-        <input
-          name="title"
-          className="form-control"
-          onChange={handleChange}
-          value={blog.title}
-        ></input>
-        <label>Body</label>
-        <input
-          name="body"
-          className="form-control"
-          value={blog.body}
-          onChange={handleChange}
-        ></input>
-        <button type="submit" className="btn btn-primary">
-          Publish Changes
-        </button>
-      </form>
+      {blog && (
+        <form className="form-group" onSubmit={handleSubmit}>
+          <label>Title</label>
+          <input
+            name="title"
+            className="form-control"
+            onChange={handleChange}
+            value={blog.title}
+          ></input>
+          <label>Body</label>
+          <input
+            name="body"
+            className="form-control"
+            value={blog.body}
+            onChange={handleChange}
+          ></input>
+          <button type="submit" className="btn btn-primary">
+            Publish Changes
+          </button>
+        </form>
+      )}
     </div>
   );
 };

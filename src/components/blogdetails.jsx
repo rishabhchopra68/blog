@@ -1,10 +1,29 @@
 import React, { Component, useEffect } from "react";
-import { getBlogs } from "../getdata";
-import { useState } from "react";
-import { Link } from "react-router-dom";
 
 const BlogDetails = (props) => {
   const id = props.match.params.id; // current blog ID
+
+  function checkPageExists(id) {
+    const data = JSON.parse(localStorage.getItem("data")).filter(
+      (blog) => blog.id == id
+    );
+    console.log(data);
+    if (!data[0]) {
+      console.log("not found");
+      props.history.push("/notfound");
+      //   <Redirect to="/notfound"></Redirect>;
+    }
+  }
+
+  function populateBlog() {
+    checkPageExists(id);
+  }
+
+  useEffect(() => {
+    // only for initial render
+
+    populateBlog();
+  }, []);
 
   return (
     <div>

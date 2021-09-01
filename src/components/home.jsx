@@ -29,8 +29,16 @@ const Home = (props) => {
 
   return (
     <div>
-      <h1>Blogapp</h1>
-      <Link to="/create"></Link>
+      <h1 style={{ textAlign: "center" }}>Blogapp</h1>
+
+      <Link to="/createblog">
+        <div style={{ textAlign: "right" }}>
+          <button className="btn btn-outline-primary btn-lg">
+            Create Blog
+          </button>
+        </div>
+      </Link>
+      <h3>Published Blogs :</h3>
       <ol className="list-group">
         {localStorage.getItem("data") &&
           JSON.parse(localStorage.getItem("data")).map((blog) => (

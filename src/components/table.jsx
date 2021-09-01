@@ -52,6 +52,7 @@ export const Table = () => {
         rowData={data}
         columnDefs={column}
         defaultColDef={defaultColDef}
+        onGridReady
       />
     </div>
   );
